@@ -1,0 +1,412 @@
+import requests, json, webbrowser, win32api, win32gui, win32con, time, win32com.client, winsound, sys, math, logging, types
+from pprint import pprint
+import urllib.request
+import urllib.parse
+
+import sys
+
+logging.basicConfig(
+  filename='gw2.log',
+  level=logging.DEBUG,)
+
+class gw2trader():
+    def __init__(self):
+        # game session id
+        self.session_id = session_key
+        # character id
+        self.char_id = char_id
+        self.opener = urllib.request.build_opener()
+        self.opener.addheaders.append(('Cookie', 's='+self.session_id))
+
+    def buy(self,item_id,amount,price):
+        self.opener.addheaders.append(('Referer', 'https://tradingpost-live.ncplatform.net/search?text=&levelmin=30&levelmax=40'))
+        response = self.opener.open('https://tradingpost-live.ncplatform.net/ws/item/'+str(item_id)+'/buy','count='+str(amount)+'&price='+str(price)+'&charid='+self.char_id) 
+        return response.read()
+
+    def search(self,offset,type,levelmin=68,levelmax=80,rarity=4,subtype=''):
+        response = self.opener.open('https://tradingpost-live.ncplatform.net/ws/search.json?text=&type='+str(type)+'&subtype='+str(subtype)+'&rarity='+str(rarity)+'&levelmin='+str(levelmin)+'&levelmax='+str(levelmax)+'&removeunavailable=1&offset='+str(offset))
+        return response.read()
+
+    def item(self,item_id):
+        response = self.opener.open('https://tradingpost-live.ncplatform.net/ws/listings.json?id='+str(item_id))
+        return response.read()
+
+    def cancel(self,item_id,listing_id):
+        google = 'https://tradingpost-live.ncplatform.net/ws/item/'+str(item_id)+'/cancel.json'+'?'+'listing='+str(listing_id)+'&isbuy=1&charid='+self.char_id
+        headers = {'Cookie': 's='+self.session_id,'Referer': 'https://tradingpost-live.ncplatform.net/me'}
+        r5 = requests.post(google, headers = headers)
+        print(r5)
+
+    def inventar(self,type,offset,time='now',count=10):
+        response = self.opener.open('https://tradingpost-live.ncplatform.net/ws/me.json?time='+time+'&type='+type+'&charid='+self.char_id+'&offset='+str(offset)+'&count='+str(count))
+        return response.read()
+
+    def nice_money(self,amount):
+        ret = '0'*(6-len(str(amount)))+str(amount)
+        if amount<100:
+            return ret[4:6]+'c'
+        elif amount>=100 and amount<10000:
+            return ret[2:4]+'s '+ret[4:6]+'c'
+        elif amount>=10000:
+            return ret[0:2]+'g '+ret[2:4]+'s '+ret[4:6]+'c'
+
+
+shell = win32com.client.Dispatch("WScript.Shell")
+char_id = "AF6DD458-CAFE-E111-8D5B-9C8E990DC2EE"
+session_key = '496BF08D-FB15-43A8-9FDE-6C0485FDB19F'
+xcoordfirstitem = 250
+ycoordfirstitem = 151
+xcoordremovefirstitem = 96
+ycoordremovefirstitem = 154
+xcoordremoveitem = 96
+ycoordremoveitem = 154
+l = 0
+trader = gw2trader()
+gold = 0
+silver = 0
+copper = 0
+poop=0
+o = 0
+pages = 0
+removeitempages = 0
+pagecounter = 0
+
+time.sleep(4)
+
+toplist = []
+winlist = []
+def enum_callback(hwnd, results):
+    winlist.append((hwnd, win32gui.GetWindowText(hwnd)))
+
+win32gui.EnumWindows(enum_callback, toplist)
+GW2 = [(hwnd, title) for hwnd, title in winlist if 'guild wars 2' in title.lower()]
+GW2 = GW2[0]
+
+
+def getjson():
+    global r2
+    global r3
+    global headers
+    '''
+    win32gui.ShowWindow(GW2[0], win32con.SW_MINIMIZE)
+    webbrowser.open(session_key)
+    time.sleep(3)
+    webbrowser.open("https://tradingpost-live.ncplatform.net/ws/me.json?time=now&type=buy&offset=1&count=3000")
+    time.sleep(2)
+    shell.SendKeys("^s")
+    time.sleep(2)
+    shell.SendKeys("m")
+    time.sleep(1)
+    shell.SendKeys("e")
+    time.sleep(1)
+    shell.SendKeys("{ENTER}")
+    time.sleep(1)
+    shell.SendKeys("{TAB}")
+    time.sleep(1)
+    shell.SendKeys("{ENTER}")
+    time.sleep(1)
+    shell.SendKeys("^w")
+    time.sleep(2)
+    shell.SendKeys("^w")
+    time.sleep(4)
+    win32gui.ShowWindow(GW2[0], win32con.SW_MAXIMIZE)
+    '''
+    headers = {'Cookie': 's='+session_key}
+    #r1 = requests.get('https://tradingpost-live.ncplatform.net/authenticate?session_key=3B31C524-E96D-4288-A44C-BBAB85219ADF&source=/me')
+    r2 = requests.get('https://tradingpost-live.ncplatform.net/ws/me.json?time=now&type=buy&offset=1&count=3000',headers = headers)
+    r3 = requests.get('https://tradingpost-live.ncplatform.net/ws/me.json?time=now&type=buy&offset=1&count=3000',headers = headers)
+
+def checktomakesureimnotbuyingitemtwice():
+    global dataids
+    global var
+    global data
+    global s
+    global mobeen
+    global listingids   
+    mobeen = 0
+    ameer = 0
+    fart = 0
+    getjson()
+    s = []
+    data = r2.json()
+    dataids = []
+    listingids = []
+    
+    
+    for x in range(0,len(data['listings'])):
+        dataids.append(data['listings'][x]['data_id'])
+        listingids.append(data['listings'][x]['listing_id'])
+    while(ameer == 0):
+        for i in dataids:
+            if i not in s:
+                print('i is not in s')
+                print(len(s))
+                print(len(dataids))
+                s.append(i)
+                mobeen += 1
+            else:
+                print(mobeen)
+                logging.error("i was buying the same of=%s",dataids[mobeen])
+                print(dataids[mobeen],listingids[mobeen])
+                trader.cancel(dataids[mobeen],listingids[mobeen])
+                break
+            
+        if len(s) == len(dataids):
+            print('len of s and and len of data ids is the same')
+            ameer = 1
+            break
+        getjson()
+        s = []
+        data = r2.json()
+        dataids = []
+        listingids = []
+        time.sleep(1)
+        mobeen = 0
+        for x in range(0,len(data['listings'])):
+            dataids.append(data['listings'][x]['data_id'])
+            listingids.append(data['listings'][x]['listing_id'])
+    
+
+def click(x,y):
+    win32api.SetCursorPos((x,y))
+    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN,x,y,0,0)
+    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP,x,y,0,0)
+
+def rightclick(x,y):
+    win32api.SetCursorPos((x,y))
+    win32api.mouse_event(win32con.MOUSEEVENTF_RIGHTDOWN,x,y,0,0)
+    win32api.mouse_event(win32con.MOUSEEVENTF_RIGHTUP,x,y,0,0)
+
+def doubleclick(x,y):
+    win32api.SetCursorPos((x,y))
+    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN,x,y,0,0)
+    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP,x,y,0,0)
+    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN,x,y,0,0)
+    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP,x,y,0,0)
+
+def moveforwardandback():
+    shell.SendKeys("W")
+    shell.SendKeys("S")
+
+def inputprice(gold,silver,copper):
+    doubleclick(105,317)
+    time.sleep(1)
+    shell.SendKeys(gold)
+    time.sleep(1)
+    doubleclick(176,314)
+    time.sleep(1)
+    shell.SendKeys(silver)
+    time.sleep(1)
+    doubleclick(241,317)
+    time.sleep(1)
+    shell.SendKeys(copper)
+    time.sleep(1)
+
+def increase_coord():
+    global l
+    global ycoordfirstitem
+    global ycoordremoveitem
+    global xcoordfirstitem
+    global ycoordfirstitem
+    global xcoordremoveitem
+    global removeitempages
+    global pages
+    global pagecounter
+    if l <= 7:
+        ycoordfirstitem += 48
+        ycoordremoveitem += 48 
+        l += 1
+    elif l == 8:
+        removeitempages = 1
+        ycoordfirstitem += 48
+        ycoordremoveitem += 48 
+        l += 1
+    else:
+        xcoordfirstitem = 250
+        ycoordfirstitem = 151
+        xcoordremoveitem = 96
+        ycoordremoveitem = 154
+        time.sleep(1)
+        pages += 1
+        pagecounter +=1
+        #ichanged l = 1 to 0 
+        l = 0
+
+def convertbuypricenumbertogsc(y):
+    global o
+    global copper
+    global silver
+    global gold
+    global buyprice
+    o = int(buyprice[y])
+    copper = math.floor(o % 100)
+    silver = math.floor((o % 10000) / 100)
+    gold = math.floor((o % 1000000) / 10000)
+    if(copper == 99):
+        copper = 0
+        silver += 1
+    else:
+        copper += 1
+
+
+
+def getmoney():
+    time.sleep(1)
+    click(25,307)
+    time.sleep(1)
+    click(94,53)
+    
+        
+def gothroughbuyitems():
+    global pagecounter
+    global r3
+    global r2
+    global newdata
+    global poop
+    global removeitempages
+    global headers
+    global buyprice
+    global gold
+    global silver
+    global copper
+    #click on sell orders
+    click(28,219)
+    time.sleep(2)
+    #click(gobacktomytransactions)
+    click(24,261)
+    time.sleep(2)
+    click(431,73)
+    time.sleep(2)
+    click(415,119)
+
+    getjson()
+
+
+    #json_data=open('C:\Documents and Settings\Administrator\My Documents\Downloads\me.json')
+    data = r2.json()
+
+    #pprint(data)
+    #json_data.close()
+
+
+    dataids = []
+    buyprice = []
+    unitprice = []
+    newdataids = []
+
+
+    for x in range(0,len(data['listings'])):
+        dataids.append(data['listings'][x]['data_id'])
+        buyprice.append(data['listings'][x]['buy_price'])
+        unitprice.append(data['listings'][x]['unit_price'])
+    
+    
+    
+
+    for a, b, in zip(buyprice, unitprice):
+        logging.error('poop = %s',poop)
+        logging.error('pages = %s',pages)
+        logging.error("xclicked %s", xcoordfirstitem)
+        logging.error("yclicked %s", ycoordfirstitem)
+        logging.error("xremoved %s", xcoordremoveitem)
+        logging.error("yremoved %s", ycoordremoveitem)
+        logging.error("l = %s", l)
+        logging.error("len of data listings = %s", len(data['listings']))
+        logging.error("removeitempages = %s", removeitempages)
+        #i SHOULD PUT IN A FUCNTION THAT GETS A NEW JSON COMPARES IT TO Len of DATA IDS and IF ITS DIFFIFERENT START OVER
+        time.sleep(1)
+        for _ in range(pagecounter):
+            click(864,626)
+            pagecounter -= 1
+        if a > b:
+            logging.error('buyprice is greater than a unitprice of %s', b)
+            time.sleep(2)
+            click(xcoordfirstitem,ycoordfirstitem)
+            time.sleep(2)
+            #click again	
+            click(118,195)
+            time.sleep(2)
+            #click again
+            click(201,320)
+            time.sleep(2)
+            convertbuypricenumbertogsc(poop)
+            logging.error("gold = %s", gold)
+            logging.error("silver = %s", silver)
+            logging.error("copper = %s", copper)
+            inputprice(gold,silver,copper)
+            time.sleep(2)
+            #click place order
+            logging.error("I clicked place order")
+            click(139,390)
+            time.sleep(2)
+            getmoney()
+            #click on sell orders
+            click(28,219)
+            time.sleep(2)
+            #click(gobacktomytransactions)
+            click(24,261)
+            time.sleep(2)
+            click(431,73)
+            time.sleep(2)
+            click(415,119)
+            time.sleep(2)
+            #click removeitem 
+            logging.error("I am getting ready to remove item")
+            for g in range(pages):
+                click(864,626)
+                time.sleep(2)
+            for r in range(removeitempages):
+                click(864,626)
+                time.sleep(2)
+            if removeitempages == 1:
+                click(xcoordremovefirstitem,ycoordremovefirstitem)
+                logging.info("i tehoritailcally clicked on remove item for teh 10th item =ycoord %s", ycoordremoveitem)
+                time.sleep(1)
+                pagecounter -= 1
+            else:
+                logging.info("i removed the item at ycoordremoveitem(add 48 to this) %s =", ycoordremoveitem) 
+                click(xcoordremoveitem,(ycoordremoveitem + 48))
+                time.sleep(2)
+        if a <= b:
+            logging.error("buyprice is less than or equal to a unitprice of %s", b)
+        poop += 1
+        removeitempages = 0
+        increase_coord()
+        r3 = requests.get('https://tradingpost-live.ncplatform.net/ws/me.json?time=now&type=buy&offset=1&count=3000',headers = headers)
+        
+        newdata = r3.json()
+        for x in range(0,len(newdata['listings'])):
+            newdataids.append(newdata['listings'][x]['data_id'])
+        logging.error("len of newdatalistings = %s", len(newdata['listings']))
+        if len(data['listings']) != len(newdata['listings']):
+            logging.error("items are different")
+            break
+        else:
+            newdataids = []
+            
+var = 1
+checktomakesureimnotbuyingitemtwice()
+while(var == 1):
+    gothroughbuyitems()
+    xcoordfirstitem = 250
+    ycoordfirstitem = 151
+    xcoordremovefirstitem = 96
+    ycoordremovefirstitem = 154
+    xcoordremoveitem = 96
+    ycoordremoveitem = 154
+    l = 0
+    gold = 0
+    silver = 0
+    copper = 0
+    poop=0
+    o = 0
+    pages = 0
+    removeitempages = 0
+    pagecounter = 0
+    dataids = []
+    buyprice = []
+    unitprice = []
+    newdataids = []
+    moveforwardandback()
+    time.sleep(250)
+    checktomakesureimnotbuyingitemtwice()
