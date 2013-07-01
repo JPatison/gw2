@@ -1,9 +1,9 @@
-import requests, json, webbrowser, win32api, win32gui, win32con, time, win32com.client, winsound, sys, math, logging, types
+import requests, json, webbrowser, win32api, win32gui, win32con, time, win32com.client, winsound, sys, math, logging, types, string, os
 from pprint import pprint
 import urllib.request
 import urllib.parse
 
-import sys
+
 
 logging.basicConfig(
   filename='gw2.log',
@@ -53,7 +53,7 @@ class gw2trader():
 
 shell = win32com.client.Dispatch("WScript.Shell")
 char_id = "AF6DD458-CAFE-E111-8D5B-9C8E990DC2EE"
-session_key = '496BF08D-FB15-43A8-9FDE-6C0485FDB19F'
+session_key = '4A682EF3-2580-4FE8-B726-E6AC4503F397'
 xcoordfirstitem = 250
 ycoordfirstitem = 151
 xcoordremovefirstitem = 96
@@ -75,18 +75,36 @@ time.sleep(4)
 
 toplist = []
 winlist = []
-def enum_callback(hwnd, results):
-    winlist.append((hwnd, win32gui.GetWindowText(hwnd)))
 
-win32gui.EnumWindows(enum_callback, toplist)
-GW2 = [(hwnd, title) for hwnd, title in winlist if 'guild wars 2' in title.lower()]
-GW2 = GW2[0]
+
+def startgw2():
+    try: win32api.WinExec('C:\Documents and Settings\Administrator\Desktop\Guild Wars 2\gw2.exe') # Works seamlessly
+    except: pass
+    time.sleep(60)
+    print("Iclicked my char to login")
+    doubleclick(476,668)
+    time.sleep(1)
+    shell.SendKeys("{ENTER}")
+    time.sleep(70)
+    click(178,12)
+    time.sleep(1)
+    try: win32api.WinExec("C:\Documents and Settings\Administrator\Desktop\ZicoresTradingPostNotifier\ZicoresTradingPostNotifier.exe") # Works seamlessly
+    except: pass
+    
+    time.sleep(5)
 
 
 def getjson():
     global r2
     global r3
     global headers
+    global GW2
+    def enum_callback(hwnd, results):
+        winlist.append((hwnd, win32gui.GetWindowText(hwnd)))
+
+    win32gui.EnumWindows(enum_callback, toplist)
+    GW2 = [(hwnd, title) for hwnd, title in winlist if 'guild wars 2' in title.lower()]
+    GW2 = GW2[0]
     '''
     win32gui.ShowWindow(GW2[0], win32con.SW_MINIMIZE)
     webbrowser.open(session_key)
@@ -160,7 +178,7 @@ def checktomakesureimnotbuyingitemtwice():
         data = r2.json()
         dataids = []
         listingids = []
-        time.sleep(1)
+        time.sleep(2)
         mobeen = 0
         for x in range(0,len(data['listings'])):
             dataids.append(data['listings'][x]['data_id'])
@@ -190,17 +208,17 @@ def moveforwardandback():
 
 def inputprice(gold,silver,copper):
     doubleclick(105,317)
-    time.sleep(1)
+    time.sleep(2)
     shell.SendKeys(gold)
-    time.sleep(1)
+    time.sleep(2)
     doubleclick(176,314)
-    time.sleep(1)
+    time.sleep(2)
     shell.SendKeys(silver)
-    time.sleep(1)
+    time.sleep(2)
     doubleclick(241,317)
-    time.sleep(1)
+    time.sleep(2)
     shell.SendKeys(copper)
-    time.sleep(1)
+    time.sleep(2)
 
 def increase_coord():
     global l
@@ -251,9 +269,9 @@ def convertbuypricenumbertogsc(y):
 
 
 def getmoney():
-    time.sleep(1)
+    time.sleep(2)
     click(25,307)
-    time.sleep(1)
+    time.sleep(2)
     click(94,53)
     
         
@@ -271,12 +289,12 @@ def gothroughbuyitems():
     global copper
     #click on sell orders
     click(28,219)
-    time.sleep(2)
+    time.sleep(4)
     #click(gobacktomytransactions)
     click(24,261)
-    time.sleep(2)
+    time.sleep(4)
     click(431,73)
-    time.sleep(2)
+    time.sleep(4)
     click(415,119)
 
     getjson()
@@ -314,50 +332,50 @@ def gothroughbuyitems():
         logging.error("len of data listings = %s", len(data['listings']))
         logging.error("removeitempages = %s", removeitempages)
         #i SHOULD PUT IN A FUCNTION THAT GETS A NEW JSON COMPARES IT TO Len of DATA IDS and IF ITS DIFFIFERENT START OVER
-        time.sleep(1)
+        time.sleep(2)
         for _ in range(pagecounter):
             click(864,626)
             pagecounter -= 1
         if a > b:
             logging.error('buyprice is greater than a unitprice of %s', b)
-            time.sleep(2)
+            time.sleep(4)
             click(xcoordfirstitem,ycoordfirstitem)
-            time.sleep(2)
+            time.sleep(4)
             #click again	
             click(118,195)
-            time.sleep(2)
+            time.sleep(4)
             #click again
             click(201,320)
-            time.sleep(2)
+            time.sleep(4)
             convertbuypricenumbertogsc(poop)
             logging.error("gold = %s", gold)
             logging.error("silver = %s", silver)
             logging.error("copper = %s", copper)
             inputprice(gold,silver,copper)
-            time.sleep(2)
+            time.sleep(4)
             #click place order
             logging.error("I clicked place order")
             click(139,390)
-            time.sleep(2)
+            time.sleep(4)
             getmoney()
             #click on sell orders
             click(28,219)
-            time.sleep(2)
+            time.sleep(4)
             #click(gobacktomytransactions)
             click(24,261)
-            time.sleep(2)
+            time.sleep(4)
             click(431,73)
-            time.sleep(2)
+            time.sleep(4)
             click(415,119)
-            time.sleep(2)
+            time.sleep(4)
             #click removeitem 
             logging.error("I am getting ready to remove item")
             for g in range(pages):
                 click(864,626)
-                time.sleep(2)
+                time.sleep(4)
             for r in range(removeitempages):
                 click(864,626)
-                time.sleep(2)
+                time.sleep(4)
             if removeitempages == 1:
                 click(xcoordremovefirstitem,ycoordremovefirstitem)
                 logging.info("i tehoritailcally clicked on remove item for teh 10th item =ycoord %s", ycoordremoveitem)
@@ -366,7 +384,7 @@ def gothroughbuyitems():
             else:
                 logging.info("i removed the item at ycoordremoveitem(add 48 to this) %s =", ycoordremoveitem) 
                 click(xcoordremoveitem,(ycoordremoveitem + 48))
-                time.sleep(2)
+                time.sleep(4)
         if a <= b:
             logging.error("buyprice is less than or equal to a unitprice of %s", b)
         poop += 1
@@ -385,6 +403,7 @@ def gothroughbuyitems():
             newdataids = []
             
 var = 1
+#startgw2()
 checktomakesureimnotbuyingitemtwice()
 while(var == 1):
     gothroughbuyitems()
