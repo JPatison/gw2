@@ -53,7 +53,7 @@ class gw2trader():
 
 shell = win32com.client.Dispatch("WScript.Shell")
 char_id = "AF6DD458-CAFE-E111-8D5B-9C8E990DC2EE"
-session_key = '4A682EF3-2580-4FE8-B726-E6AC4503F397'
+session_key = '6581CBF8-93B2-46B0-B5D0-7D21450B0A8B'
 xcoordfirstitem = 250
 ycoordfirstitem = 151
 xcoordremovefirstitem = 96
@@ -85,7 +85,8 @@ def startgw2():
     doubleclick(476,668)
     time.sleep(1)
     shell.SendKeys("{ENTER}")
-    time.sleep(70)
+    time.sleep(80)
+    click(178,12)
     click(178,12)
     time.sleep(1)
     try: win32api.WinExec("C:\Documents and Settings\Administrator\Desktop\ZicoresTradingPostNotifier\ZicoresTradingPostNotifier.exe") # Works seamlessly
@@ -404,6 +405,7 @@ def gothroughbuyitems():
             
 var = 1
 #startgw2()
+#input("Press Enter to continue...")
 checktomakesureimnotbuyingitemtwice()
 while(var == 1):
     gothroughbuyitems()
