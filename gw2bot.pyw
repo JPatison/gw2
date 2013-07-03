@@ -2,6 +2,10 @@ import requests, json, webbrowser, win32api, win32gui, win32con, time, win32com.
 from pprint import pprint
 import urllib.request
 import urllib.parse
+from bs4 import BeautifulSoup
+from lxml import etree
+import lxml
+from ctypes import *
 
 
 
@@ -9,7 +13,118 @@ logging.basicConfig(
   filename='gw2.log',
   level=logging.DEBUG,)
 
+
+if os.name == 'nt':
+    PUL = POINTER(c_ulong)
+    class KeyBdInput(Structure):
+        _fields_ = [("wVk", c_ushort),
+                    ("wScan", c_ushort),
+                    ("dwFlags", c_ulong),
+                    ("time", c_ulong),
+                    ("dwExtraInfo", PUL)]
+
+    class HardwareInput(Structure):
+        _fields_ = [("uMsg", c_ulong),
+                    ("wParamL", c_short),
+                    ("wParamH", c_ushort)]
+
+    class MouseInput(Structure):
+        _fields_ = [("dx", c_long),
+                    ("dy", c_long),
+                    ("mouseData", c_ulong),
+                    ("dwFlags", c_ulong),
+                    ("time",c_ulong),
+                    ("dwExtraInfo", PUL)]
+
+    class Input_I(Union):
+        _fields_ = [("ki", KeyBdInput),
+                    ("mi", MouseInput),
+                    ("hi", HardwareInput)]
+
+    class Input(Structure):
+        _fields_ = [("type", c_ulong),
+                    ("ii", Input_I)]
+
+    KEYEVENTF_KEYUP = 0x2
+    KEYEVENTF_UNICODE = 0x4
+    KEYEVENTF_SCANCODE = 0x8
+    MAPVK_VK_TO_VSC = 0
+
+    def SendInput(txt):
+        i = Input()
+        i.type = 1
+        extra = c_ulong(0)
+        pextra = pointer(extra)
+        for c in txt:
+            vk = windll.user32.VkKeyScanW(ord(c))
+            sc = windll.user32.MapVirtualKeyW(vk&0xff, MAPVK_VK_TO_VSC)
+            i.ii.ki.wVk = 0
+            i.ii.ki.wScan = sc
+            i.ii.ki.dwFlags = KEYEVENTF_SCANCODE
+            i.ii.ki.time = 0
+            i.ii.ki.dwExtraInfo = pextra
+            windll.user32.SendInput(1, byref(i), sizeof(i))
+            i.ii.ki.dwFlags = KEYEVENTF_SCANCODE | KEYEVENTF_KEYUP
+            windll.user32.SendInput(1, byref(i), sizeof(i))
+
+    def SendKeyPress(key):
+        i = Input()
+        i.type = 1
+        extra = c_ulong(0)
+        pextra = pointer(extra)
+        vk = windll.user32.VkKeyScanW(ord(key))
+        sc = windll.user32.MapVirtualKeyW(vk&0xff, MAPVK_VK_TO_VSC)
+        i.ii.ki.wVk = 0
+        i.ii.ki.wScan = sc
+        i.ii.ki.dwFlags = KEYEVENTF_SCANCODE
+        i.ii.ki.time = 0
+        i.ii.ki.dwExtraInfo = pextra
+        windll.user32.SendInput(1, byref(i), sizeof(i))
+
+    def SendKeyRelease(key):
+        i = Input()
+        i.type = 1
+        extra = c_ulong(0)
+        pextra = pointer(extra)
+        vk = windll.user32.VkKeyScanW(ord(key))
+        sc = windll.user32.MapVirtualKeyW(vk&0xff, MAPVK_VK_TO_VSC)
+        i.ii.ki.wVk = 0
+        i.ii.ki.wScan = sc
+        i.ii.ki.time = 0
+        i.ii.ki.dwExtraInfo = pextra
+        i.ii.ki.dwFlags = KEYEVENTF_SCANCODE | KEYEVENTF_KEYUP
+        windll.user32.SendInput(1, byref(i), sizeof(i))
+
+
+shell = win32com.client.Dispatch("WScript.Shell")
+char_id = "4DCA2230-9686-E211-A9A3-9C8E990DC2EE"
+session_key = ''
+xcoordfirstitem = 250
+ycoordfirstitem = 151
+xcoordremovefirstitem = 96
+ycoordremovefirstitem = 154
+xcoordremoveitem = 96
+ycoordremoveitem = 154
+l = 0
+
+gold = 0
+silver = 0
+copper = 0
+poop=0
+o = 0
+pages = 0
+removeitempages = 0
+pagecounter = 0
+
+time.sleep(4)
+
+toplist = []
+winlist = []
+toplist2 = []
+winlist2 = []
+
 class gw2trader():
+    global session_key
     def __init__(self):
         # game session id
         self.session_id = session_key
@@ -33,7 +148,9 @@ class gw2trader():
 
     def cancel(self,item_id,listing_id):
         google = 'https://tradingpost-live.ncplatform.net/ws/item/'+str(item_id)+'/cancel.json'+'?'+'listing='+str(listing_id)+'&isbuy=1&charid='+self.char_id
-        headers = {'Cookie': 's='+self.session_id,'Referer': 'https://tradingpost-live.ncplatform.net/me'}
+        print(google)
+        headers = {'Cookie': 's='+session_key,'Referer': 'https://tradingpost-live.ncplatform.net/me'}
+        print(headers)
         r5 = requests.post(google, headers = headers)
         print(r5)
 
@@ -50,49 +167,46 @@ class gw2trader():
         elif amount>=10000:
             return ret[0:2]+'g '+ret[2:4]+'s '+ret[4:6]+'c'
 
-
-shell = win32com.client.Dispatch("WScript.Shell")
-char_id = "AF6DD458-CAFE-E111-8D5B-9C8E990DC2EE"
-session_key = '6581CBF8-93B2-46B0-B5D0-7D21450B0A8B'
-xcoordfirstitem = 250
-ycoordfirstitem = 151
-xcoordremovefirstitem = 96
-ycoordremovefirstitem = 154
-xcoordremoveitem = 96
-ycoordremoveitem = 154
-l = 0
 trader = gw2trader()
-gold = 0
-silver = 0
-copper = 0
-poop=0
-o = 0
-pages = 0
-removeitempages = 0
-pagecounter = 0
-
-time.sleep(4)
-
-toplist = []
-winlist = []
-
 
 def startgw2():
+    global session_key
+    global soup
+    global hwnd
+    
     try: win32api.WinExec('C:\Documents and Settings\Administrator\Desktop\Guild Wars 2\gw2.exe') # Works seamlessly
     except: pass
     time.sleep(60)
-    print("Iclicked my char to login")
+    #print("Iclicked my char to login")
     doubleclick(476,668)
     time.sleep(1)
     shell.SendKeys("{ENTER}")
-    time.sleep(80)
-    click(178,12)
+    time.sleep(110)
+    
     click(178,12)
     time.sleep(1)
+    click(666,20)
+    time.sleep(1)
+    click(178,12)
+    time.sleep(1)
+    
+    time.sleep(4)
     try: win32api.WinExec("C:\Documents and Settings\Administrator\Desktop\ZicoresTradingPostNotifier\ZicoresTradingPostNotifier.exe") # Works seamlessly
     except: pass
+
+    time.sleep(1)
+    click(25,263)
+    time.sleep(1)
+    click(997,529)
+    time.sleep(40)
+    shell.SendKeys("%{TAB}")
+    time.sleep(60)
+    shell.SendKeys("%{F4}")
+    time.sleep(20)
     
-    time.sleep(5)
+    soup = BeautifulSoup(open('C:\Documents and Settings\Administrator\Application Data\ZicoresTradingPostNotifier\config.xml'), "xml")
+    for SessionKey in soup.SessionKey:
+        session_key = SessionKey
 
 
 def getjson():
@@ -204,8 +318,10 @@ def doubleclick(x,y):
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP,x,y,0,0)
 
 def moveforwardandback():
-    shell.SendKeys("W")
-    shell.SendKeys("S")
+    time.sleep(1)
+    SendKeyPress('d')
+    time.sleep(1)
+    SendKeyRelease('d')
 
 def inputprice(gold,silver,copper):
     doubleclick(105,317)
@@ -389,6 +505,7 @@ def gothroughbuyitems():
         if a <= b:
             logging.error("buyprice is less than or equal to a unitprice of %s", b)
         poop += 1
+        moveforwardandback()
         removeitempages = 0
         increase_coord()
         r3 = requests.get('https://tradingpost-live.ncplatform.net/ws/me.json?time=now&type=buy&offset=1&count=3000',headers = headers)
@@ -404,9 +521,10 @@ def gothroughbuyitems():
             newdataids = []
             
 var = 1
-#startgw2()
-#input("Press Enter to continue...")
+startgw2()
+
 checktomakesureimnotbuyingitemtwice()
+
 while(var == 1):
     gothroughbuyitems()
     xcoordfirstitem = 250
@@ -429,5 +547,5 @@ while(var == 1):
     unitprice = []
     newdataids = []
     moveforwardandback()
-    time.sleep(250)
+    time.sleep(100)
     checktomakesureimnotbuyingitemtwice()
