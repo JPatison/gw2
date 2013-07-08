@@ -11,6 +11,7 @@ from ctypes import *
 
 logging.basicConfig(
   filename='gw2.log',
+  format='%(asctime)s %(levelname)s %(message)s',
   level=logging.DEBUG,)
 
 
@@ -98,7 +99,7 @@ if os.name == 'nt':
 
 shell = win32com.client.Dispatch("WScript.Shell")
 char_id = "4DCA2230-9686-E211-A9A3-9C8E990DC2EE"
-session_key = ''
+session_key = '8846579D-A190-4B3C-91F5-581705D47092'
 xcoordfirstitem = 250
 ycoordfirstitem = 151
 xcoordremovefirstitem = 96
@@ -134,9 +135,12 @@ class gw2trader():
         self.opener.addheaders.append(('Cookie', 's='+self.session_id))
 
     def buy(self,item_id,amount,price):
-        self.opener.addheaders.append(('Referer', 'https://tradingpost-live.ncplatform.net/search?text=&levelmin=30&levelmax=40'))
-        response = self.opener.open('https://tradingpost-live.ncplatform.net/ws/item/'+str(item_id)+'/buy','count='+str(amount)+'&price='+str(price)+'&charid='+self.char_id) 
-        return response.read()
+        yolo = 'https://tradingpost-live.ncplatform.net/ws/item/'+str(item_id)+'/buy'+'?'+'count='+str(amount)+'&price='+str(price)+'&charid='+self.char_id
+        print(yolo)
+        headers = {'Cookie': 's='+session_key,'Referer': 'https://tradingpost-live.ncplatform.net/me'}
+        print(headers)
+        r6 = requests.post(yolo, headers = headers)
+        print(r6)
 
     def search(self,offset,type,levelmin=68,levelmax=80,rarity=4,subtype=''):
         response = self.opener.open('https://tradingpost-live.ncplatform.net/ws/search.json?text=&type='+str(type)+'&subtype='+str(subtype)+'&rarity='+str(rarity)+'&levelmin='+str(levelmin)+'&levelmax='+str(levelmax)+'&removeunavailable=1&offset='+str(offset))
@@ -214,6 +218,7 @@ def getjson():
     global r3
     global headers
     global GW2
+    global solditems
     def enum_callback(hwnd, results):
         winlist.append((hwnd, win32gui.GetWindowText(hwnd)))
 
@@ -248,7 +253,8 @@ def getjson():
     #r1 = requests.get('https://tradingpost-live.ncplatform.net/authenticate?session_key=3B31C524-E96D-4288-A44C-BBAB85219ADF&source=/me')
     r2 = requests.get('https://tradingpost-live.ncplatform.net/ws/me.json?time=now&type=buy&offset=1&count=3000',headers = headers)
     r3 = requests.get('https://tradingpost-live.ncplatform.net/ws/me.json?time=now&type=buy&offset=1&count=3000',headers = headers)
-
+    solditems = requests.get('https://tradingpost-live.ncplatform.net/ws/me.json?time=past&type=sell&offset=1&count=3000',headers = headers)
+    
 def checktomakesureimnotbuyingitemtwice():
     global dataids
     global var
@@ -273,6 +279,7 @@ def checktomakesureimnotbuyingitemtwice():
         for i in dataids:
             if i not in s:
                 print('i is not in s')
+                
                 print(len(s))
                 print(len(dataids))
                 s.append(i)
@@ -285,7 +292,7 @@ def checktomakesureimnotbuyingitemtwice():
                 break
             
         if len(s) == len(dataids):
-            print('len of s and and len of data ids is the same')
+            logging.error('len of s and and len of data ids is the same')
             ameer = 1
             break
         getjson()
@@ -298,7 +305,54 @@ def checktomakesureimnotbuyingitemtwice():
         for x in range(0,len(data['listings'])):
             dataids.append(data['listings'][x]['data_id'])
             listingids.append(data['listings'][x]['listing_id'])
+    logging.error('gone,trhough checksameitems,I am not buying any of the same items')
     
+def autoputupbuyordersforitemsivesold():
+    global solditemsjson
+    global oldsellitemsjson
+    boot = 4
+    getjson()
+    sitems = []
+    sitemsprice = []
+    oldsitems = []
+    json_data=open('C:\Documents and Settings\Administrator\My Documents\GitHub\gw2\solditems.json')
+    oldsellitemsjson = json.load(json_data)
+    json_data.close()
+    solditemsjson = solditems.json()
+    
+    
+    for x in range(0,len(solditemsjson['listings'])):
+            sitems.append(solditemsjson['listings'][x]['data_id'])
+            oldsitems.append(oldsellitemsjson['listings'][x]['data_id'])
+            sitemsprice.append(solditemsjson['listings'][x]['buy_price'])
+    while(boot == 4):
+        cat = 0
+        
+        for a, b, in zip(oldsitems, sitems):
+            if a == b:
+                cat += 1
+                print(a +"does equal" + b)
+            if a != b:
+                print(a +"does not equal" + b)
+                print(b)
+                print(sitemsprice[cat])
+                trader.buy(b,1,sitemsprice[cat])
+                print(sitems[cat])
+                del sitems[cat]
+                del sitemsprice[cat]
+                break
+            if cat == 90:
+                with open('solditems.json', 'w') as f:
+                    json.dump(solditemsjson, f)
+                boot = 5
+            print(cat)
+                
+        
+    
+    #i have a file named sold items on my computer
+    #it does a get json and compares my newly sold items list to my old one
+    #if they are different it takes those new items and sets up a buy order for them if the spread is a minimum of 20 copper
+    #when it is done it overwrites this new sold items list with the old one
 
 def click(x,y):
     win32api.SetCursorPos((x,y))
@@ -322,6 +376,12 @@ def moveforwardandback():
     SendKeyPress('d')
     time.sleep(1)
     SendKeyRelease('d')
+    time.sleep(1)
+    SendKeyPress('a')
+    time.sleep(1)
+    SendKeyRelease('a')
+    time.sleep(1)
+    logging.error("i have gone through moveforwardandbackfunction")
 
 def inputprice(gold,silver,copper):
     doubleclick(105,317)
@@ -515,16 +575,18 @@ def gothroughbuyitems():
             newdataids.append(newdata['listings'][x]['data_id'])
         logging.error("len of newdatalistings = %s", len(newdata['listings']))
         if len(data['listings']) != len(newdata['listings']):
-            logging.error("items are different")
+            logging.error("item sizes are different,something must have been sold or something messed up")
             break
         else:
             newdataids = []
             
 var = 1
+
 startgw2()
-
+logging.error("my char id is = %s",char_id)
+logging.error("my session key is %s",session_key)
 checktomakesureimnotbuyingitemtwice()
-
+autoputupbuyordersforitemsivesold()
 while(var == 1):
     gothroughbuyitems()
     xcoordfirstitem = 250
@@ -548,4 +610,7 @@ while(var == 1):
     newdataids = []
     moveforwardandback()
     time.sleep(100)
+    logging.error("I have made it through all the buy items, or im guessing that item sizes are different thus my break works")
     checktomakesureimnotbuyingitemtwice()
+
+
