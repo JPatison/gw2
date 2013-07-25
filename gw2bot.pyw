@@ -341,11 +341,11 @@ def autoputupbuyordersforitemsivesold():
                 del sitems[cat]
                 del sitemsprice[cat]
                 break
-            if cat == 90:
-                with open('solditems.json', 'w') as f:
-                    json.dump(solditemsjson, f)
+        if cat >= 70:
+            with open('solditems.json', 'w') as f:
+                json.dump(solditemsjson, f)
                 boot = 5
-            print(cat)
+        print(cat)
                 
         
     
