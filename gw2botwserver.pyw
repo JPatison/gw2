@@ -6,7 +6,8 @@ from bs4 import BeautifulSoup
 from lxml import etree
 import lxml
 from ctypes import *
-
+import xmlrpc.client
+server = xmlrpc.client.Server('https://shemer77:boktai2@108.61.63.199:8000')
 
 
 logging.basicConfig(
@@ -261,7 +262,10 @@ def checktomakesureimnotbuyingitemtwice():
     global data
     global s
     global mobeen
-    global listingids   
+    global listingids
+    global char_id
+    global session_key
+    global server
     mobeen = 0
     ameer = 0
     fart = 0
@@ -288,7 +292,7 @@ def checktomakesureimnotbuyingitemtwice():
                 print(mobeen)
                 logging.error("i was buying the same of=%s",dataids[mobeen])
                 print(dataids[mobeen],listingids[mobeen])
-                trader.cancel(dataids[mobeen],listingids[mobeen])
+                server.cancel(dataids[mobeen],listingids[mobeen],str(char_id),str(session_key))
                 break
             
         if len(s) == len(dataids):
@@ -310,6 +314,9 @@ def checktomakesureimnotbuyingitemtwice():
 def autoputupbuyordersforitemsivesold():
     global solditemsjson
     global oldsellitemsjson
+    global server
+    global session_key
+    global char_id
     boot = 4
     getjson()
     sitems = []
@@ -336,12 +343,12 @@ def autoputupbuyordersforitemsivesold():
                 print(a +"does not equal" + b)
                 print(b)
                 print(sitemsprice[cat])
-                trader.buy(b,1,sitemsprice[cat])
+                server.buy(b,1,sitemsprice[cat],str(char_id),str(session_key))
                 print(sitems[cat])
                 del sitems[cat]
                 del sitemsprice[cat]
                 break
-        if cat >= 70:
+        if cat >= 45:
             with open('solditems.json', 'w') as f:
                 json.dump(solditemsjson, f)
                 boot = 5
@@ -459,11 +466,18 @@ def gothroughbuyitems():
     global newdata
     global poop
     global removeitempages
+    global pages
     global headers
+    global xcoordfirstitem
+    global ycoordfirstitem
+    global xcoordremoveitem
+    global ycoordremoveitem
+    global l
     global buyprice
     global gold
     global silver
     global copper
+    global server
     #click on sell orders
     click(28,219)
     time.sleep(4)
@@ -567,7 +581,16 @@ def gothroughbuyitems():
         poop += 1
         moveforwardandback()
         removeitempages = 0
-        increase_coord()
+        response = []
+        response = server.increase_coord(l,ycoordfirstitem,ycoordremoveitem,xcoordfirstitem,xcoordremoveitem,removeitempages,pages,pagecounter)
+        l = response[0]
+        ycoordfirstitem = response[1]
+        ycoordremoveitem = response[2]
+        xcoordfirstitem = response[3]
+        xcoordremoveitem = response[4]
+        removeitempages = response[5]
+        pages = response[6]
+        pagecounter = response[7]
         r3 = requests.get('https://tradingpost-live.ncplatform.net/ws/me.json?time=now&type=buy&offset=1&count=3000',headers = headers)
         
         newdata = r3.json()
