@@ -125,55 +125,6 @@ winlist = []
 toplist2 = []
 winlist2 = []
 
-class gw2trader():
-    global session_key
-    def __init__(self):
-        # game session id
-        self.session_id = session_key
-        # character id
-        self.char_id = char_id
-        self.opener = urllib.request.build_opener()
-        self.opener.addheaders.append(('Cookie', 's='+self.session_id))
-
-    def buy(self,item_id,amount,price):
-        yolo = 'https://tradingpost-live.ncplatform.net/ws/item/'+str(item_id)+'/buy'+'?'+'count='+str(amount)+'&price='+str(price)+'&charid='+self.char_id
-        print(yolo)
-        headers = {'Cookie': 's='+session_key,'Referer': 'https://tradingpost-live.ncplatform.net/me'}
-        print(headers)
-        r6 = requests.post(yolo, headers = headers)
-        print(r6)
-
-    def search(self,offset,type,levelmin=68,levelmax=80,rarity=4,subtype=''):
-        response = self.opener.open('https://tradingpost-live.ncplatform.net/ws/search.json?text=&type='+str(type)+'&subtype='+str(subtype)+'&rarity='+str(rarity)+'&levelmin='+str(levelmin)+'&levelmax='+str(levelmax)+'&removeunavailable=1&offset='+str(offset))
-        return response.read()
-
-    def item(self,item_id):
-        response = self.opener.open('https://tradingpost-live.ncplatform.net/ws/listings.json?id='+str(item_id))
-        return response.read()
-
-    def cancel(self,item_id,listing_id):
-        google = 'https://tradingpost-live.ncplatform.net/ws/item/'+str(item_id)+'/cancel.json'+'?'+'listing='+str(listing_id)+'&isbuy=1&charid='+self.char_id
-        print(google)
-        headers = {'Cookie': 's='+session_key,'Referer': 'https://tradingpost-live.ncplatform.net/me'}
-        print(headers)
-        r5 = requests.post(google, headers = headers)
-        print(r5)
-
-    def inventar(self,type,offset,time='now',count=10):
-        response = self.opener.open('https://tradingpost-live.ncplatform.net/ws/me.json?time='+time+'&type='+type+'&charid='+self.char_id+'&offset='+str(offset)+'&count='+str(count))
-        return response.read()
-
-    def nice_money(self,amount):
-        ret = '0'*(6-len(str(amount)))+str(amount)
-        if amount<100:
-            return ret[4:6]+'c'
-        elif amount>=100 and amount<10000:
-            return ret[2:4]+'s '+ret[4:6]+'c'
-        elif amount>=10000:
-            return ret[0:2]+'g '+ret[2:4]+'s '+ret[4:6]+'c'
-
-trader = gw2trader()
-
 def startgw2():
     global session_key
     global soup
@@ -404,36 +355,6 @@ def inputprice(gold,silver,copper):
     shell.SendKeys(copper)
     time.sleep(2)
 
-def increase_coord():
-    global l
-    global ycoordfirstitem
-    global ycoordremoveitem
-    global xcoordfirstitem
-    global ycoordfirstitem
-    global xcoordremoveitem
-    global removeitempages
-    global pages
-    global pagecounter
-    if l <= 7:
-        ycoordfirstitem += 48
-        ycoordremoveitem += 48 
-        l += 1
-    elif l == 8:
-        removeitempages = 1
-        ycoordfirstitem += 48
-        ycoordremoveitem += 48 
-        l += 1
-    else:
-        xcoordfirstitem = 250
-        ycoordfirstitem = 151
-        xcoordremoveitem = 96
-        ycoordremoveitem = 154
-        time.sleep(1)
-        pages += 1
-        pagecounter +=1
-        #ichanged l = 1 to 0 
-        l = 0
-
 def convertbuypricenumbertogsc(y):
     global o
     global copper
@@ -457,6 +378,30 @@ def getmoney():
     click(25,307)
     time.sleep(2)
     click(94,53)
+
+def resell_items():
+    time.sleep(2)
+    #clickonsellyourstuff
+    click(25,216)
+    time.sleep(2)
+    #clickfirstitem
+    click(140,163)
+    time.sleep(2)
+    #clickonmatchlowestseller
+    click(554,448)
+    time.sleep(2)
+    #clicksell
+    click(877,265)
+    time.sleep(2)
+    #clickseconditem
+    click(138,206)
+    time.sleep(2)
+    #clickonmatchlowestseller
+    click(554,448)
+    time.sleep(2)
+    #clicksell
+    click(877,265)
+    time.sleep(2)
     
         
 def gothroughbuyitems():
@@ -635,5 +580,6 @@ while(var == 1):
     time.sleep(100)
     logging.error("I have made it through all the buy items, or im guessing that item sizes are different thus my break works")
     checktomakesureimnotbuyingitemtwice()
+    resell_items()
 
 
