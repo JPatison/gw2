@@ -357,17 +357,17 @@ def moveforwardandback():
 
 def inputprice(gold,silver,copper):
     doubleclick(105,317)
-    time.sleep(1)
+    time.sleep(0.5)
     shell.SendKeys(gold)
-    time.sleep(1)
+    time.sleep(0.5)
     doubleclick(176,314)
-    time.sleep(1)
+    time.sleep(0.5)
     shell.SendKeys(silver)
-    time.sleep(1)
+    time.sleep(0.5)
     doubleclick(241,317)
-    time.sleep(1)
+    time.sleep(0.5)
     shell.SendKeys(copper)
-    time.sleep(1)
+    time.sleep(0.5)
 
 def convertbuypricenumbertogsc(y):
     global o
@@ -484,44 +484,44 @@ def gothroughbuyitems():
             pagecounter -= 1
         if a > b:
             logging.error('buyprice is greater than a unitprice of %s', b)
-            time.sleep(2)
+            time.sleep(1)
             click(xcoordfirstitem,ycoordfirstitem)
-            time.sleep(4)
+            time.sleep(3)
             #click again	
             click(118,195)
-            time.sleep(4)
+            time.sleep(1)
             #click again
             click(201,320)
-            time.sleep(2)
+            time.sleep(1)
             convertbuypricenumbertogsc(poop)
             logging.error("gold = %s", gold)
             logging.error("silver = %s", silver)
             logging.error("copper = %s", copper)
             inputprice(gold,silver,copper)
-            time.sleep(1)
+            time.sleep(0.5)
             #click place order
             logging.error("I clicked place order")
             click(139,390)
-            time.sleep(2)
+            time.sleep(0.5)
             getmoney()
             #click on sell orders
             click(28,219)
             time.sleep(4)
             #click(gobacktomytransactions)
             click(24,261)
-            time.sleep(4)
+            time.sleep(3)
             click(431,73)
-            time.sleep(2)
+            time.sleep(1)
             click(415,119)
-            time.sleep(2)
+            time.sleep(1)
             #click removeitem 
             logging.error("I am getting ready to remove item")
             for g in range(pages):
                 click(864,626)
-                time.sleep(4)
+                time.sleep(2)
             for r in range(removeitempages):
                 click(864,626)
-                time.sleep(4)
+                time.sleep(2)
             if removeitempages == 1:
                 click(xcoordremovefirstitem,ycoordremovefirstitem)
                 logging.info("i tehoritailcally clicked on remove item for teh 10th item =ycoord %s", ycoordremoveitem)
@@ -530,7 +530,7 @@ def gothroughbuyitems():
             else:
                 logging.info("i removed the item at ycoordremoveitem(add 48 to this) %s =", ycoordremoveitem) 
                 click(xcoordremoveitem,(ycoordremoveitem + 48))
-                time.sleep(4)
+                time.sleep(2)
         if a <= b:
             logging.error("buyprice is less than or equal to a unitprice of %s", b)
         poop += 1
