@@ -357,17 +357,17 @@ def moveforwardandback():
 
 def inputprice(gold,silver,copper):
     doubleclick(105,317)
-    time.sleep(2)
+    time.sleep(1)
     shell.SendKeys(gold)
-    time.sleep(2)
+    time.sleep(1)
     doubleclick(176,314)
-    time.sleep(2)
+    time.sleep(1)
     shell.SendKeys(silver)
-    time.sleep(2)
+    time.sleep(1)
     doubleclick(241,317)
-    time.sleep(2)
+    time.sleep(1)
     shell.SendKeys(copper)
-    time.sleep(2)
+    time.sleep(1)
 
 def convertbuypricenumbertogsc(y):
     global o
@@ -484,7 +484,7 @@ def gothroughbuyitems():
             pagecounter -= 1
         if a > b:
             logging.error('buyprice is greater than a unitprice of %s', b)
-            time.sleep(4)
+            time.sleep(2)
             click(xcoordfirstitem,ycoordfirstitem)
             time.sleep(4)
             #click again	
@@ -492,17 +492,17 @@ def gothroughbuyitems():
             time.sleep(4)
             #click again
             click(201,320)
-            time.sleep(4)
+            time.sleep(2)
             convertbuypricenumbertogsc(poop)
             logging.error("gold = %s", gold)
             logging.error("silver = %s", silver)
             logging.error("copper = %s", copper)
             inputprice(gold,silver,copper)
-            time.sleep(4)
+            time.sleep(1)
             #click place order
             logging.error("I clicked place order")
             click(139,390)
-            time.sleep(4)
+            time.sleep(2)
             getmoney()
             #click on sell orders
             click(28,219)
@@ -511,9 +511,9 @@ def gothroughbuyitems():
             click(24,261)
             time.sleep(4)
             click(431,73)
-            time.sleep(4)
+            time.sleep(2)
             click(415,119)
-            time.sleep(4)
+            time.sleep(2)
             #click removeitem 
             logging.error("I am getting ready to remove item")
             for g in range(pages):
