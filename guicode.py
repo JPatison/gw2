@@ -1,6 +1,8 @@
 #gui code
 from tkinter import *
 from tkinter import filedialog
+from tkinter import Tk, Button
+from subprocess import Popen 
 import tkinter
 import msvcrt
 import subprocess
@@ -41,7 +43,9 @@ def userpass():
 
 def close():
     n.pack()
-    root.quit()
+    process.terminate()
+    root.destroy()
+    
     
 def gw2source():
     global root
@@ -51,16 +55,14 @@ def gw2source():
     gw2locationfile= open('gw2location.txt', 'w').write(gw2location)
 
 def startgw2bot():
-    l=0
-    while l == 0:
-        subprocess.call("gw2botwserver.pyw", shell=True)
-        root.update()
-        if msvcrt.kbhit():
-            if ord(msvcrt.getch()) == 59:
-                break
-    
-    
-    
+    global process
+    process = Popen("python gw2botwserver.pyw")
+
+x = (root.winfo_screenwidth() - root.winfo_reqwidth()) / 1.1    
+y = (root.winfo_screenheight() - root.winfo_reqheight()) / 20
+root.geometry("+%d+%d" % (x, y))
+
+        
 
 b = Button(root, text="enter your username and password for the trading bot", command=userpass)
 f = Button(root, text="save your account details", command=saveusername)
@@ -72,4 +74,5 @@ c.pack()
 b.pack()
 z.pack()
 n.pack()
+
 mainloop()
