@@ -26,62 +26,6 @@ logging.basicConfig(
   format='%(asctime)s %(levelname)s %(message)s',
   level=logging.DEBUG,)
 
-#gui code
-
-master = Tk()
-root = tkinter.Tk()
-root.withdraw()
-
-def saveusername():
-    global user
-    user = ebutton.get()
-    accountlinesplit[0] = str(user)
-    print(user)
-    global password
-    password = lbutton.get()
-    accountlinesplit[1]= str(password)
-    print(password)
-    account = open('account.txt', 'r+').close()
-    account = open('account.txt', 'r+').write(accountlinesplit[0]+','+accountlinesplit[1])
-    
-
-
-def userpass():
-    global ebutton
-    global lbutton
-    ebutton = Entry(master)
-    ebutton.pack()
-    lbutton = Entry(master)
-    lbutton.pack()
-    f.pack()
-    
-
-def close():
-    root.quit()
-    
-def gw2source():
-    global root
-    global gw2location
-    gw2location = filedialog.askopenfilename()
-    gw2locationfile= open('gw2location.txt', 'w').close()
-    gw2locationfile= open('gw2location.txt', 'w').write(gw2location)
-    
-    
-    
-
-b = Button(master, text="enter your username and password for the trading bot", command=userpass)
-f = Button(master, text="save your account details", command=saveusername)
-
-c = Button(master, text="Choose Gw2 location", command=gw2source)
-z = Button(master, text="Start Gw2 bot", command = close)
-c.pack()
-
-b.pack()
-z.pack()
-
-mainloop()
-
-#end gui code
 
 server = xmlrpc.client.Server('https://'+user+':'+password+'@108.61.63.199:8000')
 print(server)
@@ -524,9 +468,6 @@ def gothroughbuyitems():
     
 
     for a, b, in zip(buyprice, unitprice):
-        if msvcrt.kbhit():
-            if ord(msvcrt.getch()) == 59:
-                break
         logging.error('poop = %s',poop)
         logging.error('pages = %s',pages)
         logging.error("xclicked %s", xcoordfirstitem)
