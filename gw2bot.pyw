@@ -315,7 +315,7 @@ def autoputupbuyordersforitemsivesold():
     sitems = []
     sitemsprice = []
     oldsitems = []
-    json_data=open('C:\Documents and Settings\Administrator\My Documents\GitHub\gw2\solditems.json')
+    json_data=open('solditems.json')
     oldsellitemsjson = json.load(json_data)
     json_data.close()
     solditemsjson = solditems.json()
