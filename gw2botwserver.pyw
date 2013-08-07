@@ -18,6 +18,8 @@ user = str(accountlinesplit[0])
 password = str(accountlinesplit[1])
 gw2locationfile = open('gw2location.txt','r+')
 gw2location = gw2locationfile.readline()
+charidfile = open('charachterid.txt')
+char_id = charidfile.readline()
 
 
 
@@ -113,7 +115,7 @@ if os.name == 'nt':
 
 
 shell = win32com.client.Dispatch("WScript.Shell")
-char_id = "4DCA2230-9686-E211-A9A3-9C8E990DC2EE"
+
 session_key = '8846579D-A190-4B3C-91F5-581705D47092'
 xcoordfirstitem = 250
 ycoordfirstitem = 151
@@ -147,7 +149,7 @@ def startgw2():
     try: win32api.WinExec(str(gw2location)) # Works seamlessly
     except: pass
     time.sleep(60)
-    #print("Iclicked my char to login")
+    print("Iclicked my char to login")
     doubleclick(476,668)
     time.sleep(1)
     shell.SendKeys("{ENTER}")
@@ -163,7 +165,7 @@ def startgw2():
     time.sleep(4)
     try: win32api.WinExec("C:\Documents and Settings\Administrator\Desktop\ZicoresTradingPostNotifier\ZicoresTradingPostNotifier.exe") # Works seamlessly
     except: pass
-
+    print("Iexecuted zicore")
     time.sleep(1)
     click(25,263)
     time.sleep(1)
