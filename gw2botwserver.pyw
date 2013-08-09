@@ -1,16 +1,8 @@
 import requests, json, webbrowser, win32api, win32gui, win32con, time, win32com.client, winsound, sys, math, logging, types, string, os
-from pprint import pprint
-import urllib.request
-import urllib.parse
-from bs4 import BeautifulSoup
-from lxml import etree
-import lxml
 from ctypes import *
 import xmlrpc.client
-from tkinter import *
-from tkinter import filedialog
-import tkinter
 import msvcrt
+import subprocess
 account = open('account.txt', 'r+')
 accountline = account.readline()
 accountlinesplit = accountline.split(",")
@@ -146,39 +138,29 @@ def startgw2():
     global soup
     global hwnd
     
-    try: win32api.WinExec(str(gw2location)) # Works seamlessly
+    try: win32api.WinExec('C:\Documents and Settings\Administrator\Desktop\Guild Wars 2\gw2.exe') # Works seamlessly
     except: pass
     time.sleep(60)
-    print("Iclicked my char to login")
+    #print("Iclicked my char to login")
     doubleclick(476,668)
     time.sleep(1)
     shell.SendKeys("{ENTER}")
-    time.sleep(110)
+    time.sleep(90)
     
     click(178,12)
     time.sleep(1)
     click(666,20)
     time.sleep(1)
     click(178,12)
-    time.sleep(1)
-    
-    time.sleep(4)
-    try: win32api.WinExec("C:\Documents and Settings\Administrator\Desktop\ZicoresTradingPostNotifier\ZicoresTradingPostNotifier.exe") # Works seamlessly
-    except: pass
-    print("Iexecuted zicore")
-    time.sleep(1)
-    click(25,263)
+    time.sleep(2)
     time.sleep(1)
     click(997,529)
-    time.sleep(40)
-    shell.SendKeys("%{TAB}")
-    time.sleep(60)
-    shell.SendKeys("%{F4}")
-    time.sleep(20)
-    
-    soup = BeautifulSoup(open('C:\Documents and Settings\Administrator\Application Data\ZicoresTradingPostNotifier\config.xml'), "xml")
-    for SessionKey in soup.SessionKey:
-        session_key = SessionKey
+    time.sleep(1)
+    subprocess.call(['java', '-jar', 'getsessionkey\getsessionkey.jar'])
+    time.sleep(.2)
+    sessionkeyfile = open('sessionVal.txt', 'r+')
+    session_key = sessionkeyfile.readline()
+    print(session_key)
 
 
 def getjson():
@@ -193,32 +175,9 @@ def getjson():
     win32gui.EnumWindows(enum_callback, toplist)
     GW2 = [(hwnd, title) for hwnd, title in winlist if 'guild wars 2' in title.lower()]
     GW2 = GW2[0]
-    '''
-    win32gui.ShowWindow(GW2[0], win32con.SW_MINIMIZE)
-    webbrowser.open(session_key)
-    time.sleep(3)
-    webbrowser.open("https://tradingpost-live.ncplatform.net/ws/me.json?time=now&type=buy&offset=1&count=3000")
-    time.sleep(2)
-    shell.SendKeys("^s")
-    time.sleep(2)
-    shell.SendKeys("m")
-    time.sleep(1)
-    shell.SendKeys("e")
-    time.sleep(1)
-    shell.SendKeys("{ENTER}")
-    time.sleep(1)
-    shell.SendKeys("{TAB}")
-    time.sleep(1)
-    shell.SendKeys("{ENTER}")
-    time.sleep(1)
-    shell.SendKeys("^w")
-    time.sleep(2)
-    shell.SendKeys("^w")
-    time.sleep(4)
-    win32gui.ShowWindow(GW2[0], win32con.SW_MAXIMIZE)
-    '''
+    
     headers = {'Cookie': 's='+session_key}
-    #r1 = requests.get('https://tradingpost-live.ncplatform.net/authenticate?session_key=3B31C524-E96D-4288-A44C-BBAB85219ADF&source=/me')
+
     r2 = requests.get('https://tradingpost-live.ncplatform.net/ws/me.json?time=now&type=buy&offset=1&count=3000',headers = headers)
     r3 = requests.get('https://tradingpost-live.ncplatform.net/ws/me.json?time=now&type=buy&offset=1&count=3000',headers = headers)
     solditems = requests.get('https://tradingpost-live.ncplatform.net/ws/me.json?time=past&type=sell&offset=1&count=3000',headers = headers)
@@ -565,8 +524,8 @@ var = 1
 startgw2()
 logging.error("my char id is = %s",char_id)
 logging.error("my session key is %s",session_key)
-checktomakesureimnotbuyingitemtwice()
 autoputupbuyordersforitemsivesold()
+checktomakesureimnotbuyingitemtwice()
 while(var == 1):
     gothroughbuyitems()
     xcoordfirstitem = 250
@@ -593,5 +552,4 @@ while(var == 1):
     logging.error("I have made it through all the buy items, or im guessing that item sizes are different thus my break works")
     checktomakesureimnotbuyingitemtwice()
     resell_items()
-
 

@@ -22,11 +22,12 @@ def userpass():
     os.startfile('account.txt')
 
 def getjsonfile():
-    gfdf
-    
+    global jsonfileprocess
+    jsonfileprocess = Popen("python getsolditemsjsonfile.pyw")
 
 def close():
     n.pack()
+    jsonfileprocess.terminate()
     process.terminate()
     root.destroy()
 

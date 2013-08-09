@@ -1,10 +1,6 @@
 import requests, json, webbrowser, win32api, win32gui, win32con, time, win32com.client, winsound, sys, math, logging, types, string, os
-from pprint import pprint
-import urllib.request
-import urllib.parse
-from bs4 import BeautifulSoup
-from lxml import etree
-import lxml
+
+
 from ctypes import *
 
 
