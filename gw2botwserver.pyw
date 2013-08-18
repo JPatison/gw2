@@ -1,4 +1,4 @@
-import requests, json, webbrowser, win32api, win32gui, win32con, time, win32com.client, winsound, sys, math, logging, types, string, os
+import requests, json, win32api, win32gui, win32con, time, win32com.client, sys, math, logging, types, string, os
 from ctypes import *
 import xmlrpc.client
 import msvcrt
@@ -178,9 +178,9 @@ def getjson():
     
     headers = {'Cookie': 's='+session_key}
 
-    r2 = requests.get('https://tradingpost-live.ncplatform.net/ws/me.json?time=now&type=buy&offset=1&count=3000',headers = headers)
-    r3 = requests.get('https://tradingpost-live.ncplatform.net/ws/me.json?time=now&type=buy&offset=1&count=3000',headers = headers)
-    solditems = requests.get('https://tradingpost-live.ncplatform.net/ws/me.json?time=past&type=sell&offset=1&count=3000',headers = headers)
+    r2 = requests.get('https://tradingpost-live.ncplatform.net/ws/me.json?time=now&type=buy&offset=1&count=3000',headers = headers, verify = False)
+    r3 = requests.get('https://tradingpost-live.ncplatform.net/ws/me.json?time=now&type=buy&offset=1&count=3000',headers = headers, verify = False)
+    solditems = requests.get('https://tradingpost-live.ncplatform.net/ws/me.json?time=past&type=sell&offset=1&count=3000',headers = headers, verify = False)
     
 def checktomakesureimnotbuyingitemtwice():
     global dataids
@@ -507,7 +507,7 @@ def gothroughbuyitems():
         removeitempages = response[5]
         pages = response[6]
         pagecounter = response[7]
-        r3 = requests.get('https://tradingpost-live.ncplatform.net/ws/me.json?time=now&type=buy&offset=1&count=3000',headers = headers)
+        r3 = requests.get('https://tradingpost-live.ncplatform.net/ws/me.json?time=now&type=buy&offset=1&count=3000',headers = headers, verify = False)
         
         newdata = r3.json()
         for x in range(0,len(newdata['listings'])):
