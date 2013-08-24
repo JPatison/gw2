@@ -28,7 +28,6 @@ def getjsonfile():
 def close():
     n.pack()
     process.terminate()
-    jsonfileprocess.terminate()
     root.destroy()
 
 def entercharid():
