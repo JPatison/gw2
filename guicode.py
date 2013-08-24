@@ -30,6 +30,9 @@ def close():
     process.terminate()
     root.destroy()
 
+def enteryourtradingcharname():
+    os.startfile('tradingcharname.txt')
+
 def entercharid():
     os.startfile('charachterid.txt')
 
@@ -53,14 +56,15 @@ root.geometry("+%d+%d" % (x, y))
 
 b = Button(root, text="enter your username,password ", command=userpass)
 i = Button(root, text="enter your charachter id", command=entercharid)
+u = Button(root, text="enter your trading character name", command=enteryourtradingcharname)
 k = Button(root, text="Get sold items json file", command=getjsonfile)
-
 n = Button(root, text="Exit application", command = close)
 c = Button(root, text="Choose Gw2 location", command=gw2source)
 z = Button(root, text="Start Gw2 bot", command = startgw2bot)
 
 c.pack()
 k.pack()
+u.pack()
 b.pack()
 i.pack()
 z.pack()

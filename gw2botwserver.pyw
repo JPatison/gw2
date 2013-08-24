@@ -3,6 +3,9 @@ from ctypes import *
 import xmlrpc.client
 import msvcrt
 import subprocess
+from PIL import *
+from PIL import ImageGrab
+from pytesser import *
 account = open('account.txt', 'r+')
 accountline = account.readline()
 accountlinesplit = accountline.split(",")
@@ -12,6 +15,7 @@ gw2locationfile = open('gw2location.txt','r+')
 gw2location = gw2locationfile.readline()
 charidfile = open('charachterid.txt')
 char_id = charidfile.readline()
+tradingcharname = open('tradingcharname.txt').readline()
 
 
 
@@ -132,6 +136,19 @@ toplist = []
 winlist = []
 toplist2 = []
 winlist2 = []
+def ocr(image):
+    process = subprocess.Popen(['tesseract.exe', image,'outputfromtesseract'])
+    process.communicate()
+
+def choosewhatcharachtertouse():
+    time.sleep(2)
+    hulu = 4
+    while(hulu == 4):
+        im = ImageGrab.grab(bbox=(40,425,425,475))
+        im.show()
+        im.save('tradingcharname.bmp')
+        ocr('tradingcharname.bmp')
+        if 
 
 def startgw2():
     global session_key
