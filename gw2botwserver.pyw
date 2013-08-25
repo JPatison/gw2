@@ -253,7 +253,7 @@ def checktomakesureimnotbuyingitemtwice():
     while(ameer == 0):
         for i in dataids:
             if i not in s:
-                logging.error('i is not in s')
+                print('i is not in s')
                 
                 print(len(s))
                 print(len(dataids))
