@@ -3,6 +3,8 @@ from ctypes import *
 import xmlrpc.client
 import msvcrt
 import subprocess
+from PIL import *
+from PIL import ImageGrab
 account = open('account.txt', 'r+')
 accountline = account.readline()
 accountlinesplit = accountline.split(",")
@@ -12,6 +14,7 @@ gw2locationfile = open('gw2location.txt','r+')
 gw2location = gw2locationfile.readline()
 charidfile = open('charachterid.txt')
 char_id = charidfile.readline()
+tradingcharname = open('tradingcharname.txt').readline()
 
 
 
@@ -20,9 +23,20 @@ logging.basicConfig(
   format='%(asctime)s %(levelname)s %(message)s',
   level=logging.DEBUG,)
 
+logging.error("Starting Guild wars 2 Trading Bot")
+logging.error("my username and password are")
+logging.error(user)
+logging.error(password)
+logging.error("gw2 is located at")
+logging.error(gw2location)
+logging.error("my char id is")
+logging.error(char_id)
+logging.error("my trading char name is")
+logging.error(tradingcharname)
 
 server = xmlrpc.client.Server('https://'+user+':'+password+'@108.61.63.199:8000')
-print(server)
+logging.error("the server is")
+logging.error(server)
 
 if os.name == 'nt':
     PUL = POINTER(c_ulong)
