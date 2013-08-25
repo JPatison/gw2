@@ -5,7 +5,6 @@ import msvcrt
 import subprocess
 from PIL import *
 from PIL import ImageGrab
-from pytesser import *
 account = open('account.txt', 'r+')
 accountline = account.readline()
 accountlinesplit = accountline.split(",")
@@ -24,9 +23,20 @@ logging.basicConfig(
   format='%(asctime)s %(levelname)s %(message)s',
   level=logging.DEBUG,)
 
+logging.error("Starting Guild wars 2 Trading Bot")
+logging.error("my username and password are")
+logging.error(user)
+logging.error(password)
+logging.error("gw2 is located at")
+logging.error(gw2location)
+logging.error("my char id is")
+logging.error(char_id)
+logging.error("my trading char name is")
+logging.error(tradingcharname)
 
 server = xmlrpc.client.Server('https://'+user+':'+password+'@108.61.63.199:8000')
-print(server)
+logging.error("the server is")
+logging.error(server)
 
 if os.name == 'nt':
     PUL = POINTER(c_ulong)
@@ -129,6 +139,8 @@ o = 0
 pages = 0
 removeitempages = 0
 pagecounter = 0
+apples = 0
+
 
 time.sleep(4)
 
@@ -141,15 +153,29 @@ def ocr(image):
     process.communicate()
 
 def choosewhatcharachtertouse():
+    global apples
     time.sleep(2)
     hulu = 4
     while(hulu == 4):
-        im = ImageGrab.grab(bbox=(40,425,425,475))
-        im.show()
+        time.sleep(1)
+        im = ImageGrab.grab(bbox=(40,440,300,475))
         im.save('tradingcharname.bmp')
         ocr('tradingcharname.bmp')
-        if 
-
+        tcharname = open('tradingcharname.txt').readline()
+        
+        with open('outputfromtesseract.txt') as f_in:
+            lines = filter(None, (line.rstrip() for line in f_in))
+        output = open('outputfromtesseract.txt').read()
+        logging.error(output)
+        if tcharname not in open('outputfromtesseract.txt').read():
+            apples += 100
+            click(476+apples,668)
+            
+        else:
+            logging.error("I found my trading char")
+            doubleclick(476+apples,668)
+            hulu = 5
+            
 def startgw2():
     global session_key
     global soup
@@ -158,10 +184,10 @@ def startgw2():
     try: win32api.WinExec('C:\Documents and Settings\Administrator\Desktop\Guild Wars 2\gw2.exe') # Works seamlessly
     except: pass
     time.sleep(60)
-    #print("Iclicked my char to login")
-    doubleclick(476,668)
+    choosewhatcharachtertouse()
     time.sleep(1)
     shell.SendKeys("{ENTER}")
+    logging.error("i have clicked my char and am going into the game")
     time.sleep(90)
     
     click(178,12)
@@ -177,7 +203,8 @@ def startgw2():
     time.sleep(.2)
     sessionkeyfile = open('sessionVal.txt', 'r+')
     session_key = sessionkeyfile.readline()
-    print(session_key)
+    logging.error("this is my session key")
+    logging.error(session_key)
 
 
 def getjson():
@@ -198,7 +225,8 @@ def getjson():
     r2 = requests.get('https://tradingpost-live.ncplatform.net/ws/me.json?time=now&type=buy&offset=1&count=3000',headers = headers, verify = False)
     r3 = requests.get('https://tradingpost-live.ncplatform.net/ws/me.json?time=now&type=buy&offset=1&count=3000',headers = headers, verify = False)
     solditems = requests.get('https://tradingpost-live.ncplatform.net/ws/me.json?time=past&type=sell&offset=1&count=3000',headers = headers, verify = False)
-    
+    logging.error("i have gone through get json now")    
+
 def checktomakesureimnotbuyingitemtwice():
     global dataids
     global var
@@ -225,7 +253,7 @@ def checktomakesureimnotbuyingitemtwice():
     while(ameer == 0):
         for i in dataids:
             if i not in s:
-                print('i is not in s')
+                logging.error('i is not in s')
                 
                 print(len(s))
                 print(len(dataids))
