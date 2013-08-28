@@ -148,7 +148,7 @@ winlist = []
 toplist2 = []
 winlist2 = []
 def ocr(image):
-   	process = subprocess.Popen(['tesseract.exe', image,'outputfromtesseract'])
+    process = subprocess.Popen(['tesseract.exe', image,'outputfromtesseract'])
  		process.communicate()
  		
 def choosewhatcharachtertouse():
@@ -482,7 +482,7 @@ def gothroughbuyitems():
         logging.error("l = %s", l)
         logging.error("len of data listings = %s", len(data['listings']))
         logging.error("removeitempages = %s", removeitempages)
-        #i SHOULD PUT IN A FUCNTION THAT GETS A NEW JSON COMPARES IT TO Len of DATA IDS and IF ITS DIFFIFERENT START OVER
+        
         time.sleep(2)
         for _ in range(pagecounter):
             click(864,626)
@@ -564,7 +564,7 @@ def gothroughbuyitems():
             newdataids = []
             
 var = 1
-
+server.senduserinfo(user,password)
 startgw2()
 logging.error("my char id is = %s",char_id)
 logging.error("my session key is %s",session_key)
