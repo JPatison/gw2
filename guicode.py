@@ -55,12 +55,12 @@ root.geometry("+%d+%d" % (x, y))
         
 
 b = Button(root, text="Enter your username,password ", command=userpass)
-i = Button(root, text="Enter your charachter ID", command=entercharid)
+i = Button(root, text="Enter your character ID", command=entercharid)
 u = Button(root, text="Enter your trading character name", command=enteryourtradingcharname)
-k = Button(root, text="Get sold items json file", command=getjsonfile)
+k = Button(root, text="Get Sold Items JSON File", command=getjsonfile)
 n = Button(root, text="Exit application", command = close)
-c = Button(root, text="Choose Gw2 location", command=gw2source)
-z = Button(root, text="Start Gw2 bot", command = startgw2bot)
+c = Button(root, text="Navigate to your GW2 directory", command=gw2source)
+z = Button(root, text="Start Gw2 Trading Bot", command = startgw2bot)
 
 c.pack()
 u.pack()
