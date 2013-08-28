@@ -149,7 +149,7 @@ toplist2 = []
 winlist2 = []
 def ocr(image):
     process = subprocess.Popen(['tesseract.exe', image,'outputfromtesseract'])
- 		process.communicate()
+    process.communicate()
  		
 def choosewhatcharachtertouse():
     global apples
