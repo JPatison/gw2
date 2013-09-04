@@ -568,8 +568,9 @@ server.senduserinfo(user,password)
 startgw2()
 logging.error("my char id is = %s",char_id)
 logging.error("my session key is %s",session_key)
-autoputupbuyordersforitemsivesold()
-checktomakesureimnotbuyingitemtwice()
+#autoputupbuyordersforitemsivesold()
+#checktomakesureimnotbuyingitemtwice()
+'''
 while(var == 1):
     gothroughbuyitems()
     xcoordfirstitem = 250
@@ -597,3 +598,5 @@ while(var == 1):
     checktomakesureimnotbuyingitemtwice()
     resell_items()
 
+
+'''

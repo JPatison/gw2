@@ -299,9 +299,9 @@ def autoputupbuyordersforitemsivesold():
     
     
     for x in range(0,len(solditemsjson['listings'])):
-            sitems.append(solditemsjson['listings'][x]['data_id'])
-            oldsitems.append(oldsellitemsjson['listings'][x]['data_id'])
-            sitemsprice.append(solditemsjson['listings'][x]['buy_price'])
+        sitems.append(solditemsjson['listings'][x]['data_id'])
+        oldsitems.append(oldsellitemsjson['listings'][x]['data_id'])
+        sitemsprice.append(solditemsjson['listings'][x]['buy_price'])
     while(boot == 4):
         cat = 0
         
