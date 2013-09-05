@@ -145,7 +145,7 @@ def doubleclick(x,y):
 
 var = 1
 
-startgw2()
+
 getjson()
 solditemsjson = solditems.json()
 with open('solditems.json', 'w') as f:

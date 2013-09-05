@@ -302,7 +302,10 @@ def autoputupbuyordersforitemsivesold():
     for x in range(0,len(solditemsjson['listings'])):
         sitems.append(solditemsjson['listings'][x]['data_id'])
         oldsitems.append(oldsellitemsjson['listings'][x]['data_id'])
-        sitemsprice.append(solditemsjson['listings'][x]['buy_price'])
+        try:
+            sitemsprice.append(solditemsjson['listings'][x]['buy_price'])
+        except KeyError:
+            sitemsprice.append('0')
     while(boot == 4):
         cat = 0
         
