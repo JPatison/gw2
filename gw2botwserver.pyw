@@ -148,6 +148,47 @@ toplist = []
 winlist = []
 toplist2 = []
 winlist2 = []
+
+def findingitemstobuy():
+    cool = 0
+    k=0
+    totalgold = 0
+    totalgoldmax = 100
+    x = requests.get('http://api.guildwarstrade.com/1/bulk/items.json')
+    y = x.json()
+    while(totalgold < totalgoldmax):
+        print(k)
+        #if supply and demand is greater than 25
+        if y['items'][k][3] > 25 and y['items'][k][4] > 25:
+            print("supply and demand is greater than 25")
+            #check if max buying price is less than 10 gold
+            checkgold = math.floor((y['items'][k][1] % 1000000) / 10000)
+            if checkgold<10:
+                print("maxbuyingprice is less than 10 gold")
+                #check to see if selling is 75 silver more than buying or sellinggold is 1 gold greater than buying
+                sellinsilver = math.floor((int(y['items'][k][2]) % 10000) / 100)
+                buyinsilver = math.floor((int(y['items'][k][1]) % 10000) / 100)
+                sellingold = math.floor((int(y['items'][k][2]) % 1000000) / 10000)
+                buyingold = math.floor((int(y['items'][k][1]) % 1000000) / 10000)
+                if sellinsilver - buyinsilver > 75 or sellingold - buyingold >1:
+                    print("I am going to buy the item number")
+                    print(k)
+                    server.buy(y['items'][k][0],1,(y['items'][k][1]+1),str(char_id),str(session_key))
+                    time.sleep(2)
+                    print("totalgold so far is")
+                    print(totalgold)
+                    totalgold += y['items'][k][1]
+                    k += 1
+                else:
+                    k +=1
+                    continue
+            else:
+                k+=1
+                continue
+        else:
+            k+= 1
+            continue
+
 def ocr(image):
     process = subprocess.Popen(['tesseract.exe', image,'outputfromtesseract'])
     process.communicate()
