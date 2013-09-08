@@ -221,7 +221,7 @@ def startgw2():
     global session_key
     global soup
     global hwnd
-    
+    #in the customer edition i have this changed
     try: win32api.WinExec('C:\Documents and Settings\Administrator\Desktop\Guild Wars 2\gw2.exe') # Works seamlessly
     except: pass
     time.sleep(60)

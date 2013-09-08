@@ -9,6 +9,7 @@ import math
 import requests, json, webbrowser, time, sys, math, logging, types, string, os
 from pprint import pprint
 import urllib
+import mechanize
 
 import BeautifulSoup
 
@@ -26,7 +27,7 @@ KEYFILE='hostkey.pem'    # Replace with your PEM formatted key file
 CERTFILE='hostcert.pem'  # Replace with your PEM formatted certificate file
 
 userPassDict = {"shemer77":"boktai2",
-                "jsmith":"hellow"}
+                "ameersucks":"toppoli"}
     
 class SimpleXMLRPCServerTLS(BaseHTTPServer.HTTPServer,SimpleXMLRPCServer.SimpleXMLRPCDispatcher):
     def __init__(self, addr, requestHandler=SimpleXMLRPCServer.SimpleXMLRPCRequestHandler,
@@ -90,10 +91,29 @@ class SimpleXMLRPCServerTLS(BaseHTTPServer.HTTPServer,SimpleXMLRPCServer.SimpleX
                 #    Get the username and password from the string
                 (username, _, password) = decodedString.partition(':')
                 #    Check that username and password match internal global dictionary
+                br = mechanize.Browser()
+
+                br.set_handle_robots(False)   # ignore robots
+                br.set_handle_refresh(False)  # can sometimes hang without this
+                response = br.open('http://vp-creations.com/?page_id=174')
+                br.form = list(br.forms())[1]
+                br['post_password']='vander'
+                response = br.submit()
+                html = response.read()
+                x = str(html)
+                if str(username) in str(html):
+                    return True
+                print(str(username))
+                print("This guy failed to login")
+                return False
+                
+
+                '''
                 if username in userPassDict:
                     if userPassDict[username] == password:
                         return True
                 return False
+                '''
         
         #    Override the normal socket methods with an SSL socket
         SocketServer.BaseServer.__init__(self, addr, VerifyingRequestHandler)
@@ -130,19 +150,19 @@ def executeRpcServer():
     class MyFuncs:
         def cancel(self,item_id,listing_id,char_id,session_key):
             google = 'https://tradingpost-live.ncplatform.net/ws/item/'+str(item_id)+'/cancel.json'+'?'+'listing='+str(listing_id)+'&isbuy=1&charid='+char_id
-            print google
+            print(google)
             headers = {'Cookie': 's='+session_key,'Referer': 'https://tradingpost-live.ncplatform.net/me'}
-            print headers
+            print(headers)
             r5 = requests.post(google, headers = headers)
-            print r5
+            print(r5)
 
         def buy(self,item_id,amount,price,char_id,session_key):
             yolo = 'https://tradingpost-live.ncplatform.net/ws/item/'+str(item_id)+'/buy'+'?'+'count='+str(amount)+'&price='+str(price)+'&charid='+char_id
-            print yolo
+            print(yolo)
             headers = {'Cookie': 's='+session_key,'Referer': 'https://tradingpost-live.ncplatform.net/me'}
-            print headers
+            print(headers)
             r6 = requests.post(yolo, headers = headers)
-            print r6
+            print(r6)
 
         def increase_coord(self,l,ycoordfirstitem,ycoordremoveitem,xcoordfirstitem,xcoordremoveitem,removeitempages,pages,pagecounter):
             if l <= 7:
@@ -167,6 +187,12 @@ def executeRpcServer():
                 #ichanged l = 1 to 0 
                 l = 0
             return l,ycoordfirstitem,ycoordremoveitem,xcoordfirstitem,xcoordremoveitem,removeitempages,pages,pagecounter
+        
+        def senduserinfo(self,user,password):
+            print("this user and his password have started the bot")
+            print(user)
+            print(password)
+        
 
     server.register_instance(MyFuncs())
 
