@@ -148,6 +148,48 @@ toplist = []
 winlist = []
 toplist2 = []
 winlist2 = []
+
+def findingitemstobuy():
+    cool = 0
+    k=0
+    totalgold = 0
+    totalgoldmax = 50
+    x = requests.get('http://api.guildwarstrade.com/1/bulk/items.json')
+    y = x.json()
+    while(totalgold < totalgoldmax):
+        print(k)
+        #if supply and demand is greater than 25
+        if y['items'][k][3] > 25 and y['items'][k][4] > 25:
+            print("supply and demand is greater than 25")
+            #check if max buying price is less than 10 gold
+            checkgold = math.floor((y['items'][k][1] % 1000000) / 10000)
+            if checkgold<10:
+                print("maxbuyingprice is less than 10 gold")
+                #check to see if selling is 75 silver more than buying or sellinggold is 1 gold greater than buying
+                sellinsilver = math.floor((int(y['items'][k][2]) % 10000) / 100)
+                buyinsilver = math.floor((int(y['items'][k][1]) % 10000) / 100)
+                sellingold = math.floor((int(y['items'][k][2]) % 1000000) / 10000)
+                buyingold = math.floor((int(y['items'][k][1]) % 1000000) / 10000)
+                if sellinsilver - buyinsilver > 75 or sellingold - buyingold >1:
+                    print("I am going to buy the item number")
+                    print(k)
+                    server.buy(y['items'][k][0],1,(y['items'][k][1]+1),str(char_id),str(session_key))
+                    time.sleep(2)
+                    print("totalgold so far is")
+                    totalgold += math.floor((int(y['items'][k][1]) % 1000000) / 10000)
+                    print(totalgold)
+                    k += 1
+                    continue
+                else:
+                    k +=1
+                    continue
+            else:
+                k+=1
+                continue
+        else:
+            k+= 1
+            continue
+
 def ocr(image):
     process = subprocess.Popen(['tesseract.exe', image,'outputfromtesseract'])
     process.communicate()
@@ -180,7 +222,7 @@ def startgw2():
     global session_key
     global soup
     global hwnd
-    
+    #in the customer edition i have this changed
     try: win32api.WinExec('C:\Documents and Settings\Administrator\Desktop\Guild Wars 2\gw2.exe') # Works seamlessly
     except: pass
     time.sleep(60)
@@ -299,8 +341,7 @@ def autoputupbuyordersforitemsivesold():
     solditemsjson = solditems.json()
     
     
-    for x in range(0,len(solditemsjson['listings'])-1):
-        print(x)
+    for x in range(0,len(solditemsjson['listings'])):
         sitems.append(solditemsjson['listings'][x]['data_id'])
         oldsitems.append(oldsellitemsjson['listings'][x]['data_id'])
         try:
@@ -572,35 +613,6 @@ server.senduserinfo(user,password)
 startgw2()
 logging.error("my char id is = %s",char_id)
 logging.error("my session key is %s",session_key)
-#autoputupbuyordersforitemsivesold()
-#checktomakesureimnotbuyingitemtwice()
-'''
-while(var == 1):
-    gothroughbuyitems()
-    xcoordfirstitem = 250
-    ycoordfirstitem = 151
-    xcoordremovefirstitem = 96
-    ycoordremovefirstitem = 154
-    xcoordremoveitem = 96
-    ycoordremoveitem = 154
-    l = 0
-    gold = 0
-    silver = 0
-    copper = 0
-    poop=0
-    o = 0
-    pages = 0
-    removeitempages = 0
-    pagecounter = 0
-    dataids = []
-    buyprice = []
-    unitprice = []
-    newdataids = []
-    moveforwardandback()
-    time.sleep(100)
-    logging.error("I have made it through all the buy items, or im guessing that item sizes are different thus my break works")
-    checktomakesureimnotbuyingitemtwice()
-    resell_items()
-
-
-'''
+findingitemstobuy()
+autoputupbuyordersforitemsivesold()
+checktomakesureimnotbuyingitemtwice()

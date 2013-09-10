@@ -153,7 +153,7 @@ def findingitemstobuy():
     cool = 0
     k=0
     totalgold = 0
-    totalgoldmax = 100
+    totalgoldmax = 50
     x = requests.get('http://api.guildwarstrade.com/1/bulk/items.json')
     y = x.json()
     while(totalgold < totalgoldmax):
@@ -176,9 +176,10 @@ def findingitemstobuy():
                     server.buy(y['items'][k][0],1,(y['items'][k][1]+1),str(char_id),str(session_key))
                     time.sleep(2)
                     print("totalgold so far is")
+                    totalgold += math.floor((int(y['items'][k][1]) % 1000000) / 10000)
                     print(totalgold)
-                    totalgold += y['items'][k][1]
                     k += 1
+                    continue
                 else:
                     k +=1
                     continue
