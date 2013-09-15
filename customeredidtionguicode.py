@@ -4,8 +4,6 @@ from tkinter import filedialog
 from tkinter import Tk, Button
 from subprocess import Popen 
 import tkinter
-import msvcrt
-import subprocess
 import os
 
 master = Tk()

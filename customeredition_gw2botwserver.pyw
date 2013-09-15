@@ -1,7 +1,6 @@
 import requests, json, win32api, win32gui, win32con, time, win32com.client, sys, math, logging, types, string, os
 from ctypes import *
 import xmlrpc.client
-import msvcrt
 import subprocess
 from PIL import *
 from PIL import ImageGrab
@@ -17,9 +16,8 @@ char_id = charidfile.readline()
 tradingcharname = open('tradingcharname.txt').readline()
 
 
-
 logging.basicConfig(
-  filename='gw2.log',
+  filename=user + '.' +'gw2.log',
   format='%(asctime)s %(levelname)s %(message)s',
   level=logging.DEBUG,)
 
@@ -37,6 +35,15 @@ logging.error(tradingcharname)
 server = xmlrpc.client.Server('https://'+user+':'+password+'@108.61.63.199:8000')
 logging.error("the server is")
 logging.error(server)
+
+loggingfile = open(user + '.' +'gw2.log')
+loggingfilepost = requests.post('http://108.61.63.199/uploads/upload_file.php', files =  {'file':loggingfile})
+loggingfile.close
+#print(r.status_code)
+#print(r.headers)
+logging.error(loggingfilepost.text)
+#print(r.text)
+
 
 if os.name == 'nt':
     PUL = POINTER(c_ulong)
@@ -208,7 +215,6 @@ def startgw2():
 
 def getjson():
     global r2
-    global r3
     global headers
     global GW2
     global solditems
@@ -222,7 +228,6 @@ def getjson():
     headers = {'Cookie': 's='+session_key}
 
     r2 = requests.get('https://tradingpost-live.ncplatform.net/ws/me.json?time=now&type=buy&offset=1&count=3000',headers = headers, verify = False)
-    r3 = requests.get('https://tradingpost-live.ncplatform.net/ws/me.json?time=now&type=buy&offset=1&count=3000',headers = headers, verify = False)
     solditems = requests.get('https://tradingpost-live.ncplatform.net/ws/me.json?time=past&type=sell&offset=1&count=3000',headers = headers, verify = False)
     logging.error("i have gone through get json now") 
 
@@ -238,7 +243,6 @@ def checktomakesureimnotbuyingitemtwice():
     global server
     mobeen = 0
     ameer = 0
-    fart = 0
     getjson()
     s = []
     data = r2.json()
@@ -599,4 +603,7 @@ while(var == 1):
     logging.error("I have made it through all the buy items, or im guessing that item sizes are different thus my break works")
     checktomakesureimnotbuyingitemtwice()
     resell_items()
-
+    loggingfile = open(user + '.' +'gw2.log')
+    loggingfilepost = requests.post('http://108.61.63.199/uploads/upload_file.php', files =  {'file':loggingfile})
+    loggingfile.close
+    logging.error(loggingfilepost.text)

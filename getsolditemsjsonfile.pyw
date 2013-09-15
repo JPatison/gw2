@@ -1,4 +1,4 @@
-import requests, json, win32api, win32gui, win32con, time, win32com.client, sys, types, string, os
+import requests, json, win32api, win32gui, win32con, time, win32com.client, sys, types, string
 import subprocess
 
 

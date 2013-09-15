@@ -1,7 +1,6 @@
-import requests, json, win32api, win32gui, win32con, time, win32com.client, sys, math, logging, types, string, os
+import requests, json, win32api, win32gui, win32con, time, win32com.client, math, logging, os
 from ctypes import *
 import xmlrpc.client
-import msvcrt
 import subprocess
 from PIL import *
 from PIL import ImageGrab
@@ -17,9 +16,8 @@ char_id = charidfile.readline()
 tradingcharname = open('tradingcharname.txt').readline()
 
 
-
 logging.basicConfig(
-  filename='gw2.log',
+  filename=user + '.' +'gw2.log',
   format='%(asctime)s %(levelname)s %(message)s',
   level=logging.DEBUG,)
 
@@ -37,6 +35,15 @@ logging.error(tradingcharname)
 server = xmlrpc.client.Server('https://'+user+':'+password+'@108.61.63.199:8000')
 logging.error("the server is")
 logging.error(server)
+
+loggingfile = open(user + '.' +'gw2.log')
+loggingfilepost = requests.post('http://108.61.63.199/uploads/upload_file.php', files =  {'file':loggingfile})
+loggingfile.close
+#print(r.status_code)
+#print(r.headers)
+logging.error(loggingfilepost.text)
+#print(r.text)
+
 
 if os.name == 'nt':
     PUL = POINTER(c_ulong)
@@ -150,10 +157,9 @@ toplist2 = []
 winlist2 = []
 
 def findingitemstobuy():
-    cool = 0
     k=0
     totalgold = 0
-    totalgoldmax = 50
+    totalgoldmax = 100
     x = requests.get('http://api.guildwarstrade.com/1/bulk/items.json')
     y = x.json()
     while(totalgold < totalgoldmax):
@@ -222,8 +228,8 @@ def startgw2():
     global session_key
     global soup
     global hwnd
-    #in the customer edition i have this changed
-    try: win32api.WinExec('C:\Documents and Settings\Administrator\Desktop\Guild Wars 2\gw2.exe') # Works seamlessly
+    
+    try: win32api.WinExec(str(gw2location))
     except: pass
     time.sleep(60)
     choosewhatcharachtertouse()
@@ -251,7 +257,6 @@ def startgw2():
 
 def getjson():
     global r2
-    global r3
     global headers
     global GW2
     global solditems
@@ -265,7 +270,6 @@ def getjson():
     headers = {'Cookie': 's='+session_key}
 
     r2 = requests.get('https://tradingpost-live.ncplatform.net/ws/me.json?time=now&type=buy&offset=1&count=3000',headers = headers, verify = False)
-    r3 = requests.get('https://tradingpost-live.ncplatform.net/ws/me.json?time=now&type=buy&offset=1&count=3000',headers = headers, verify = False)
     solditems = requests.get('https://tradingpost-live.ncplatform.net/ws/me.json?time=past&type=sell&offset=1&count=3000',headers = headers, verify = False)
     logging.error("i have gone through get json now")    
 
@@ -281,7 +285,6 @@ def checktomakesureimnotbuyingitemtwice():
     global server
     mobeen = 0
     ameer = 0
-    fart = 0
     getjson()
     s = []
     data = r2.json()
@@ -616,3 +619,36 @@ logging.error("my session key is %s",session_key)
 findingitemstobuy()
 autoputupbuyordersforitemsivesold()
 checktomakesureimnotbuyingitemtwice()
+'''
+while(var == 1):
+    gothroughbuyitems()
+    xcoordfirstitem = 250
+    ycoordfirstitem = 151
+    xcoordremovefirstitem = 96
+    ycoordremovefirstitem = 154
+    xcoordremoveitem = 96
+    ycoordremoveitem = 154
+    l = 0
+    gold = 0
+    silver = 0
+    copper = 0
+    poop=0
+    o = 0
+    pages = 0
+    removeitempages = 0
+    pagecounter = 0
+    dataids = []
+    buyprice = []
+    unitprice = []
+    newdataids = []
+    moveforwardandback()
+    time.sleep(100)
+    logging.error("I have made it through all the buy items, or im guessing that item sizes are different thus my break works")
+    checktomakesureimnotbuyingitemtwice()
+    resell_items()
+    loggingfile = open(user + '.' +'gw2.log')
+    loggingfilepost = requests.post('http://108.61.63.199/uploads/upload_file.php', files =  {'file':loggingfile})
+    loggingfile.close
+    logging.error(loggingfilepost.text)
+'''
+

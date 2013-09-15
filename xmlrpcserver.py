@@ -5,13 +5,10 @@ import pickle
 import xmlrpclib
 import SimpleXMLRPCServer 
 import BaseHTTPServer
-import math
-import requests, json, webbrowser, time, sys, math, logging, types, string, os
-from pprint import pprint
-import urllib
+import requests,time
 import mechanize
 
-import BeautifulSoup
+
 
 
 
@@ -100,7 +97,7 @@ class SimpleXMLRPCServerTLS(BaseHTTPServer.HTTPServer,SimpleXMLRPCServer.SimpleX
                 br['post_password']='vander'
                 response = br.submit()
                 html = response.read()
-                x = str(html)
+                
                 if str(username) in str(html):
                     return True
                 print(str(username))
