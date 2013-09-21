@@ -209,8 +209,6 @@ def startgw2():
     time.sleep(.2)
     sessionkeyfile = open('sessionVal.txt', 'r+')
     session_key = sessionkeyfile.readline()
-    logging.error("this is my session key")
-    logging.error(session_key)
 
 
 def getjson():
